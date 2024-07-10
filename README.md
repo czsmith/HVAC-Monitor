@@ -1,4 +1,4 @@
-# Project to monitor my HVAC system
+# HVACMonitor: Project to monitor my HVAC system
 
 I live in Florida and that means rising temperatures in the summer, along with surging electric bills for cooling.
 
@@ -34,7 +34,7 @@ The signals to control the compressor (whether one or two stages), fan, auxillar
 In my system, with a Honeywell FocusPRO® TH5000 thermostat, the signals are:
 | Color  | Purpose                                                  | When High relative to Common |
 | ------ | -------------------------------------------------------- | ---------------------------- |
-| Red    | Power.  24-28 VAC - Power thermostat and HVAC Monitor    | Always HIGH               | 
+| Red    | Power.  24-28 VAC - Power thermostat and HVAC Monitor    | Always high               | 
 | Blue   | Common                                                   | Never high                   |
 | Yellow | Contactor - Compressor main (or only) stage              | Compressor on                |
 | Orange | Changeover - Selects heat or cool mode                   | Depends on thermostat / compressor |
@@ -58,12 +58,13 @@ Also, during development, I'd like to power the monitor with a USB port so there
 
 - Signal conditioners to isolate the input AC signals and convert them to levels the ESP can handle.  I'm using 4N35 opto isolators, but any similar part would be fine. (I had a bunch lying around from a prior project). Since these are DC devices, a diode is needed along with the resistors to reduce the input current.  If you use an AC opto isolator, the diode isn't necessary.
 There are two "common" terminals, one for the sensors and one for the power source. Jumping pins 1 and 2 connect these.  This allows a separate power source from the thermostat. **BUT NOTE: the commons are connected in the LM2596S buck converter, so a separate floating power source is required if you use this option.**
+Also note that two-stage heat pumps have second a signal to the compressor.  In this design, just wire both signals to the Compressor and Compressor2 inputs. HVAC Monitor only reports one compressor state regardless of which compressor input is asserted.
 
 - Interface to Dallas DM18B20 type temperature sensors. This is a one-pin interface. The sensors use 3.3V, ground and a shared signal bus to send temperature readings. The probes for the intake, discharge and ambient temperatures can be connected with either a 4-pin header or KF2510 connectors. It doesn't matter which connector is used; probes are identified by address, not connector.
 
 - WEMOS D1 Mini board.
 
-Since the control signals are AC, they need to be converted to DC for the ESP.  But they're also 60HZ, so if the opto output were fed directly to the ESP, it'd be pulsing 60 times per second on each line.  Software debouncing could address that problem, but I used a hardware solution. A 4.7uF capacitor is connected to the opto output with a high pull-up resistor. When the AC signal is asserted, the capacitor is discharged through the isolator.  Before the next cycle, the voltage only builds up to about 500mv, which continues to read as a low signal by the ESP.  Feel free to play around with different capacitor and resistor values.
+Since the control signals are AC, they need to be converted to DC for the ESP.  But they're also 60HZ, so if the opto output were fed directly to the ESP, it'd be pulsing 60 times per second on each line.  Software debouncing could address that problem, but I used a hardware solution. A 4.7uF capacitor is connected to the opto output with a high pull-up resistor. When the AC signal is asserted, the capacitor is discharged through the isolator.  Before the next cycle, the voltage only builds up to about 500mV, which continues to read as a low signal by the ESP.  Feel free to play around with different capacitor and resistor values.
 
 ### Design Automation & Wiring
 Schematics were captured with EasyEDA, a free scjeatioc capture and PCB design product which is aviliable online via browser or can be installed on a Windows, Mac or Linux machine.
