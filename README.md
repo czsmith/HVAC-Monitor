@@ -67,7 +67,7 @@ Also note that two-stage heat pumps have second a signal to the compressor.  In 
 Since the control signals are AC, they need to be converted to DC for the ESP.  But they're also 60HZ, so if the opto output were fed directly to the ESP, it'd be pulsing 60 times per second on each line.  Software debouncing could address that problem, but I used a hardware solution. A 4.7uF capacitor is connected to the opto output with a high pull-up resistor. When the AC signal is asserted, the capacitor is discharged through the isolator.  Before the next cycle, the voltage only builds up to about 500mV, which continues to read as a low signal by the ESP.  Feel free to play around with different capacitor and resistor values.
 
 ### Design Automation & Wiring
-Schematics were captured with EasyEDA, a free scjeatioc capture and PCB design product which is aviliable online via browser or can be installed on a Windows, Mac or Linux machine.
+Schematics were captured with EasyEDA, a free schematic capture and PCB design product which is aviliable online via browser or can be installed on a Windows, Mac or Linux machine.
 
 My first prototype was all hand wired on three pad-boards. Needing to make another, I used the EasyEDA PCB layout tool to create a two-layer PC board.  For a very small amount of money and about 2 weeks, NextPCB.com delivered 5 boards.
 
