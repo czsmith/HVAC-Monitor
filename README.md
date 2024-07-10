@@ -6,7 +6,7 @@ A couple years back, my air conditioner had trouble keeping up with the hotter t
 
 Fresh off an ESPHome/Homeassistant project to monitor my home alarm system, I went looking for a solution.
 
-I came across Jim Shank's great [AC Watcher project](https://github.com/jshank/ACWatcher/blob/main/README.md).  I used a number of his ideas that got this project moving much more quickly.  Thank you Jim!
+I came across [Jim Shank's](https://github.com/jshank) great [AC Watcher project](https://github.com/jshank/ACWatcher/blob/main/README.md).  I used a number of his ideas that got this project moving much more quickly.  Thank you Jim!
 
 Some of my functional goals:
 - Monitor the current state of the HVAC system: heat/cooling, fan on/off, compressor on/off
