@@ -24,8 +24,20 @@ I ended up building this in several parts:
 In a traditional heap pump scenario, all the information about the state is available by monitoring the signals from the thermostat to the HVAC system.
 
 A typical heat pump HVAC system is controlled by a thermostat which receives power form the air handler and sends control signals to the air handler and the compressor as illustrated below:
-<img src="images/BasicOperation.png" width=600>
 
+<img src="Images/BasicOperation.png" width=600>
+
+The signals to control the compressor (whether one or two stages), fan, auxillary heater and heat/cool mode are present as 0VAC or 24VAC on the connection between the thermostat and the air handler.  We ill be tapping this cable, outside of the air handler to get access to the HVAC state.  So I just picked up some thermostat wire (8/18 guage) at my local big box store and accessed the signals in my attic:
+
+
+
+
+
+
+
+
+
+===================
 HVAC continues to be one of the highest energy devices in our household yet even the more advanced systems don't contain monitoring or alerting components to let you know when something isn't working correctly. This can be both frustrating and costly. Modern cooling systems will run the fan and compressor continuously, even if they aren't working properly. This solution aims to provide a simple and cost effective way of monitoring the performance of your system and alerting you when there are problems. 
 
 There are 3 components:
