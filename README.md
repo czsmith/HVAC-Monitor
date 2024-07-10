@@ -25,12 +25,55 @@ In a traditional heap pump scenario, all the information about the state is avai
 
 A typical heat pump HVAC system is controlled by a thermostat which receives power form the air handler and sends control signals to the air handler and the compressor as illustrated below:
 
-<img src="Images/BasicOperation.png" width=600>
+<img src="Images/BasicOperation.png" >
 
-The signals to control the compressor (whether one or two stages), fan, auxillary heater and heat/cool mode are present as 0VAC or 24VAC on the connection between the thermostat and the air handler.  We ill be tapping this cable, outside of the air handler to get access to the HVAC state.  So I just picked up some thermostat wire (8/18 guage) at my local big box store and accessed the signals in my attic:
+The signals to control the compressor (whether one or two stages), fan, auxillary heater and heat/cool mode are present as 0VAC or 24VAC on the connection between the thermostat and the air handler.  I tapped this cable, outside of the air handler, to get access to the HVAC state.  So I just picked up some thermostat wire (8/18 guage) at my local big box store and accessed the signals in my attic:
+
+<img src="Images/ThermostatTap.jpeg" >
+
+In my system, with a Honeywell FocusPRO® TH5000 thermostat, the signals are:
+| Color  | Purpose                                                  | When High relative to Common |
+| ------ | -------------------------------------------------------- | ---------------------------- |
+| Red    | Power.  24-28 VAC - Power thermostat and HVAC Monitor    | Always HIGH               | 
+| Blue   | Common                                                   | Never high                   |
+| Yellow | Contactor - Compressor main (or only) stage              | Compressor on                |
+| Orange | Changeover - Selects heat or cool mode                   | Depends on thermostat / compressor |
+| Green  | Fan                                                      | Fan on                       |
+| White  | Auxillary / Emergency heat                               | Heater coils on              |
+
+**NOTICE: OF COURSE,  YOU NEED TO DETERMINE THE CONFIGURATION FOR YOUR PARTICULAR SYSTEM.  THESE ARE COMMON FOR POPULAR HONEYWELL THERMOSTSATS.**
+
+**IT IS ALSO CRITICAL FOR THIS IMPLEMENTATION THAT THE POWER NOT EXCEEED 30VAC.**
 
 
+## HVAC Monitor Board
+The HVAC monitor is built using a WEMOS D1 Mini ESP develpment board, running ESPHome.  
 
+<img src="Images/Schematic_HVACMon2_2024-07-10.png">
+
+The main blocks are:
+
+- Power supply to convert the 24 to 28 VAC power to 5VDC.  For this, we take power from the power and common signals (red an blue in my case) and run it through a rectifier and into a LM2596S DC-DC buck converter.  Since 28VAC peaks at 30VDC and this device is rated for 12 to 30VDC, I added two diodes to drop the incoming DC volatage by 2-3V.  
+Also, during development, I'd like to power the monitor with a USB port so there's a jumper to disconnect the output of the buck converter from the 5V input on the ESP board. When pins 1&2 are jumpered, power is provided externally.
+
+- Signal conditioners to isolate the input AC signals and convert them to levels the ESP can handle.  I'm using 4N35 opto isolators, but any similar part would be fine. (I had a bunch lying around from a prior project). Since these are DC devices, a diode is needed along with the resistors to reduce the input current.  If you use an AC opto isolator, the diode isn't necessary.
+There are two "common" terminals, one for the sensors and one for the power source. Jumping pins 1 and 2 connect these.  This allows a separate power source from the thermostat. **BUT NOTE: the commons are connected in the LM2596S buck converter, so a separate floating power source is required if you use this option.**
+
+- Interface to Dallas DM18B20 type temperature sensors. This is a one-pin interface. The sensors use 3.3V, ground and a shared signal bus to send temperature readings. The probes for the intake, discharge and ambient temperatures can be connected with either a 4-pin header or KF2510 connectors. It doesn't matter which connector is used; probes are identified by address, not connector.
+
+- WEMOS D1 Mini board.
+
+Since the control signals are AC, they need to be converted to DC for the ESP.  But they're also 60HZ, so if the opto output were fed directly to the ESP, it'd be pulsing 60 times per second on each line.  Software debouncing could address that problem, but I used a hardware solution. A 4.7uF capacitor is connected to the opto output with a high pull-up resistor. When the AC signal is asserted, the capacitor is discharged through the isolator.  Before the next cycle, the voltage only builds up to about 500mv, which continues to read as a low signal by the ESP.  Feel free to play around with different capacitor and resistor values.
+
+### Design Automation & Wiring
+Schematics were captured with EasyEDA, a free scjeatioc capture and PCB design product which is aviliable online via browser or can be installed on a Windows, Mac or Linux machine.
+
+My first prototype was all hand wired on three pad-boards. Needing to make another, I used the EasyEDA PCB layout tool to create a two-layer PC board.  For a very small amount of money and about 2 weeks, NextPCB.com delivered 5 boards.
+
+<img src="Images/HVACMonitorBoard.png">
+
+
+You'll find the schematic and Gerber files in the Github repository.
 
 
 
