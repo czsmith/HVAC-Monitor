@@ -1,4 +1,4 @@
-# HVACMonitor: Project to monitor my HVAC system
+# HVACMonitor: Project to Monitor My HVAC System
 
 I live in Florida and that means rising temperatures in the summer, along with surging electric bills for cooling.
 
@@ -16,9 +16,27 @@ Some of my functional goals:
 - Minimal changes to the HVAC system, and nothing that would void any warranties.
 
 I ended up building this in several parts:
-- An ESPHome based monitor for everything other than power consumption
+- An ESPHome-based monitor for everything other than power consumption
 - A commercially available power monitor I could install in my breaker panel to capture the compressor and air handler power consumption.  More on this later.
 - Homeassistant to provide visibility and additional, statstical, information
+
+
+### Current information from the ESPHome on the HVAC Monitor board
+The HVAC Monitor board has an on-board web server to show basic, current state information.
+
+<img src="Images/ESPUI.png" width=800>
+
+### Full information in Homeassistant
+Homeassistant has many more capabilities to create additional views and enrich the sensor data from the HVAC monitor board. It also integrates data from other sensor devices into a complete view of the HVAC system. In this view Homeassistant is computing run times and is merging data from the HVAC Monitor board and the power monitor in the breaker panel.
+
+<img src="Images/HAUI.png" width=400 >
+
+Homeassistant can pull data collected over time and provide graphical displays:
+
+<img src="Images/HAHistoryGraph.png">
+
+In this case, when the compressor was running at top and what the ambient temperature was in the attic at the same time. Data is pulled from the past five days.
+
 
 ## Accessing HVAC state
 In a traditional heap pump scenario, all the information about the state is available by monitoring the signals from the thermostat to the HVAC system.
@@ -31,20 +49,11 @@ The signals to control the compressor (whether one or two stages), fan, auxillar
 
 <img src="Images/ThermostatTap.jpeg" >
 
-In my system, with a Honeywell FocusPRO® TH5000 thermostat, the signals are:
-| Color  | Purpose                                                  | When High relative to Common |
-| ------ | -------------------------------------------------------- | ---------------------------- |
-| Red    | Power.  24-28 VAC - Power thermostat and HVAC Monitor    | Always high               | 
-| Blue   | Common                                                   | Never high                   |
-| Yellow | Contactor - Compressor main (or only) stage              | Compressor on                |
-| Orange | Changeover - Selects heat or cool mode                   | Depends on thermostat / compressor |
-| Green  | Fan                                                      | Fan on                       |
-| White  | Auxillary / Emergency heat                               | Heater coils on              |
-
 **NOTICE: OF COURSE,  YOU NEED TO DETERMINE THE CONFIGURATION FOR YOUR PARTICULAR SYSTEM.  THESE ARE COMMON FOR POPULAR HONEYWELL THERMOSTSATS.**
 
 **IT IS ALSO CRITICAL FOR THIS IMPLEMENTATION THAT THE POWER NOT EXCEEED 30VAC.**
 
+**THIS DESIGN IS FOR HVAC SYSTEMS WITH ONE OR TWO STAGE COMPRESSORS AND ONE OR TWO STAGE HEATING**
 
 ## HVAC Monitor Board
 The HVAC monitor is built using a WEMOS D1 Mini ESP develpment board, running ESPHome.  
@@ -53,8 +62,8 @@ The HVAC monitor is built using a WEMOS D1 Mini ESP develpment board, running ES
 
 The main blocks are:
 
-- Power supply to convert the 24 to 28 VAC power to 5VDC.  For this, we take power from the power and common signals (red an blue in my case) and run it through a rectifier and into a LM2596S DC-DC buck converter.  Since 28VAC peaks at 30VDC and this device is rated for 12 to 30VDC, I added two diodes to drop the incoming DC volatage by 2-3V.  
-Also, during development, I'd like to power the monitor with a USB port so there's a jumper to disconnect the output of the buck converter from the 5V input on the ESP board. When pins 1&2 are jumpered, power is provided externally.
+- Power supply to convert the 24 to 28 VAC power to 5VDC.  For this, we take power from the power and common signals (red an blue in my case) and run it through a rectifier and into a LM2596S DC-DC buck converter.  Since 28VAC peaks at 40VDC and this device is rated for 12 to 40VDC, I added two diodes to drop the incoming DC volatage by 2-3V.  
+Also, during development, I like to power the monitor with a USB port so there's a jumper to disconnect the output of the buck converter from the 5V input on the ESP board. When pins 1&2 are jumpered, power is provided externally. When not jumpered, a USB cable plugged into the ESP board provides power.
 
 - Signal conditioners to isolate the input AC signals and convert them to levels the ESP can handle.  I'm using 4N35 opto isolators, but any similar part would be fine. (I had a bunch lying around from a prior project). Since these are DC devices, a diode is needed along with the resistors to reduce the input current.  If you use an AC opto isolator, the diode isn't necessary.
 There are two "common" terminals, one for the sensors and one for the power source. Jumping pins 1 and 2 connect these.  This allows a separate power source from the thermostat. **BUT NOTE: the commons are connected in the LM2596S buck converter, so a separate floating power source is required if you use this option.**
@@ -66,7 +75,7 @@ Also note that two-stage heat pumps have second a signal to the compressor.  In 
 
 Since the control signals are AC, they need to be converted to DC for the ESP.  But they're also 60HZ, so if the opto output were fed directly to the ESP, it'd be pulsing 60 times per second on each line.  Software debouncing could address that problem, but I used a hardware solution. A 4.7uF capacitor is connected to the opto output with a high pull-up resistor. When the AC signal is asserted, the capacitor is discharged through the isolator.  Before the next cycle, the voltage only builds up to about 500mV, which continues to read as a low signal by the ESP.  Feel free to play around with different capacitor and resistor values.
 
-### Design Automation & Wiring
+### Design Automation
 Schematics were captured with EasyEDA, a free schematic capture and PCB design product which is aviliable online via browser or can be installed on a Windows, Mac or Linux machine.
 
 My first prototype was all hand wired on three pad-boards. Needing to make another, I used the EasyEDA PCB layout tool to create a two-layer PC board.  For a very small amount of money and about 2 weeks, NextPCB.com delivered 5 boards.
@@ -76,7 +85,60 @@ My first prototype was all hand wired on three pad-boards. Needing to make anoth
 
 You'll find the schematic and Gerber files in the Github repository.
 
+## The Build
 
+### Identifying Signal Wires
+We will need to connect the main signals from the thermostat to the HVAC system.  The first step in this is to identify which wires carry which signals.
+
+The best place to start is always with the documentation for your thermostat and air handler.  Get the model numbers and look them up on the internet.  This should give the best starting point. If you are willing, a peek inside the air handler will allow you to quickly identify the Power and Common wires.
+
+In my system, with a Honeywell FocusPRO® TH5000 thermostat, the signals are:
+| Color  | Purpose                                                  | When High relative to Common |
+| ------ | -------------------------------------------------------- | ---------------------------- |
+| Red    | Power.  24-28 VAC - Power thermostat and HVAC Monitor    | Always high               | 
+| Blue   | Common                                                   | Never high                   |
+| Yellow | Contactor - Compressor main (or only) stage              | Compressor on                |
+| Orange | Changeover - Selects heat or cool mode                   | Depends on thermostat / compressor |
+| Green  | Fan                                                      | Fan on                       |
+| White  | Auxillary / Emergency heat                               | Heater coils on              |
+
+
+After that, we need to tap into the cable carrying these signals.  Playing with the thermostat and putting the system into various modes should allow us to identify all the signal wires.  The following table shows the most likely outcome for various settings on the thermostat to aid in figuring which wire carries which signal. 
+
+**NOTE: THIS WORKED FOR ME AND SHOULD WORK, IN GENERAL.  ALWAYS USE YOUR OWN JUDEGEMENT. THE PROCESS IS NOT GUARANTEED. DO THIS AT YOUR OWN RISK.**
+
+Put your voltmeter on the AC setting.
+
+Most likely, your thermostat uses an almost-standard color scheme.  See [here](https://www.aireserv.com/about/blog/2020/february/the-thermostat-wire-color-code-you-need-to-know/) for an explanation.
+
+The first task is always to locate the Common and then the Power wires. With the thermostat in the OFF position and the Fan on Auto, look for the two leads, in any combination, that produce 24-28VAC. Use any documentation as guideance. It definitely pays to start with the red lead as the main power source and blue or black as the Common.  
+
+One complication in identifying wires is that fact that there is no particular standard for the Reverse signal. On some compressors, a HIGH reverse signals cooling mode and on some it signifies heating mode.  Thus it's possible that in searching for the Power and Common wires, you'll test the Reverse wire against Common and also get a HIGH reading. But it will become clear which is Power and which is Reverse once you change the system from heating to cooling mode.
+
+Once you've found the common wire, this table should help you identify (or confirm) the other signals by checking voltage against the Common:
+
+| Condition or Setting |  Compressor | Fan | Cool/Heat   | Aux/Emer Heat | Notes |
+| -------------------- |  ---------- | --- | ----------- | ------------- | ----- |
+|(1) TH OFF               |  LOW        | LOW | LOW or HIGH | LOW          | All LOW except Power and maybe Reverse (Cool/Heat+
+|(2) TH on COOL, not cooling, Fan Auto  |  LOW        | LOW | LOW or HIGH | LOW           | All LOW except Power and maybe Reverse
+|(3) TH on HEAT  not heating, Fan Auto   |  LOW        | LOW | Changed from (2) | LOW           | The Reverse signal hould be the opposite of the previous casae |
+|(4) TH HEAT not heating, Fan on MANUAL |  LOW        | HIGH | Same as (3)| LOW         | Only the FAN signal should change from the previous case.
+|(5) TH COOL, cooling on     | HIGH      | HIGH | Same as (2) | LOW          | Only the compressor should change since the fan was already on |
+|(6) TH HEAT, heating on     | HIGH      | HIGH | Same as (3) | LOW          | Only the reverse (heat/cool) shold change
+|(7) TH HEAT, force AUX   | HIGH      | HIGH | Same as (3) | HIGH         | Only the Aux/Emergency setting should change
+|(8) TH HEAT, Emergency   | HIGH or LOW | HIGH | Same as (3) | HIGH        | Depends on system. Usually Emergency is coils-only and compressor is turned off
+
+
+
+### Wiring
+
+### Double Check
+
+### Bench Setup
+
+#### Adjust Voltage
+
+#### Identify Temperature Probe Addresses
 
 
 
