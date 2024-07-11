@@ -178,16 +178,16 @@ At first, it's best to connect the ESP to your computer via USB port.  This will
 ### Adjust Voltage
 It helps to have a 24-28VAC power source on your workbench for the initial setup and testing. I happen to have a 24VAC wall wart from some old product.  If you dont, you might try putting three 9-volt batteries in series and using that.  (It won't matter which way you connect them to the Power and Common terminals.)
 
-The buck converter, when shipped, generally outputs the input voltage.  **ALWAYS, ALWAYS adjust the power supply output to 5V before connecting the ESP to the power supply.**
+The buck converter, when shipped, generally outputs the input voltage which will be way too high for this board.  **ALWAYS, ALWAYS adjust the power supply output to 5V before connecting the ESP to the power supply.**
 
 If the ESP is not yet installed, just power the board from the external source. If the ESP is installed, move jumper J2 to the INTERNAL power position (remove jumper or place on pins 2-3) to isolate it from the external power supply and buck converter.  
 
 With the external power source attached to the screw terminals, adjust the screw potentiameter until the output voltage on the buck converter reads 5V.
 
 ### Assemble the Temperature Probes
-Jim Shank gives a great description how to assemble the temperature probes.  Refer to his [project documentation](https://github.com/jshank/ACWatcher/blob/main/README.md#temperature-probes) for details.  I'll summarize here, but be sure to read Jim's description for the details.
+Jim Shank gives a great description how to assemble the temperature probes.  Refer to his [project documentation](https://github.com/jshank/ACWatcher/blob/main/README.md#temperature-probes) for a full description.  I'll summarize here, but be sure to read Jim's description for the details.
 
-The recommended probes are based on the Dallas DS18B20S temperature sensor. These are readily available on [amazon])https://www.amazon.com/dp/B0CP7S6HXW?ref=ppx_yo2ov_dt_b_product_details&th=1) or [aliexpress](https://www.aliexpress.us/item/3256804339655077.html?spm=a2g0o.productlist.main.65.306c1741YggZhg&algo_pvid=7e022bad-0095-4385-af6c-89916a5df688&algo_exp_id=7e022bad-0095-4385-af6c-89916a5df688-32&pdp_npi=4%40dis%21USD%210.90%210.90%21%21%210.90%210.90%21%40210318ec17206721002124591efab9%2112000029476974460%21sea%21US%214591625309%21&curPageLogUid=2cat5twrARNc&utparam-url=scene%3Asearch%7Cquery_from%3A).  Do consider the distance from your HVAC monitor board to where you will insert the probe.  I'd ordered probes with 1 meter cords and found out that I'd have been better off with 2 or 3 meter cords.  Just had to make some extension cables.
+The recommended probes are based on the Dallas DS18B20S temperature sensor. These are readily available on [amazon](https://www.amazon.com/dp/B0CP7S6HXW?ref=ppx_yo2ov_dt_b_product_details&th=1) or [aliexpress](https://www.aliexpress.us/item/3256804339655077.html?spm=a2g0o.productlist.main.65.306c1741YggZhg&algo_pvid=7e022bad-0095-4385-af6c-89916a5df688&algo_exp_id=7e022bad-0095-4385-af6c-89916a5df688-32&pdp_npi=4%40dis%21USD%210.90%210.90%21%21%210.90%210.90%21%40210318ec17206721002124591efab9%2112000029476974460%21sea%21US%214591625309%21&curPageLogUid=2cat5twrARNc&utparam-url=scene%3Asearch%7Cquery_from%3A).  Do consider the distance from your HVAC monitor board to where you will insert the probe.  I'd ordered probes with 1 meter cords and found out that I'd have been better off with 2 or 3 meter cords.  Just had to make some extension cables.
 
 The probes are attached to the end of stainless steel straws with heat shrink tubing to keep the sensor in place.  This gives enough length for the sensors to be placed in the center of airflow in the duct.
 
@@ -271,7 +271,7 @@ web_server:
 As is common with ESPHome projects, a separate secrets.yaml file holds all the "secret" passwords and encryptinn keys.
 
 ### Define the Probe Sensors
-Sharing a 1-wire bus, they are polled by ESPHome by address.  We need to set up two ESPHome components: the 1-wire bus and the actual temperature sensors.
+Sharing a 1-wire bus, the probes are individually polled by ESPHome by address.  We need to set up two ESPHome components: the 1-wire bus and the actual temperature sensors.
 
 The bus and Dallas protocol driver is configured:
 ```
@@ -280,7 +280,7 @@ one_wire:
     pin: D2
     id: dal
 ```
-This loads the 1-wire driver and tells it to use ping D1 on our ESP device.  We assign the bus id "dal" which will be used in sensor definitions to tie the temperature driver to the right bus.
+This loads the 1-wire driver and tells it to use pin D1 on our ESP device.  We assign the bus id "dal" which will be used in sensor definitions to tie the temperature driver to the right bus.
 
 Three temperature sensors are defined:
 ```
@@ -327,8 +327,7 @@ The sensors I received were quite accurate and did not need any calibration. If 
 ### Finding the Temperature Probe Address
 Sadly, the probes do not have their addresses printed on them so we need to discover them.
 
-The only way to get the address is to connect one probe at a time and look at the log messages.  
-At board startup, the one_wire driver display the address for each probe found.  There'll be log messages like:
+The only way to get the address is to connect one probe at a time and look at the log messages. At board startup, the one_wire driver display the address for each probe found.  There'll be log messages like:
 ```
 [10:15:52][C][gpio.one_wire:020]: GPIO 1-wire bus:
 [10:15:52][C][gpio.one_wire:021]:   Pin: GPIO4
@@ -446,7 +445,7 @@ text_sensor:
     name: "ESPHome Version"
 ```
 ### Derive a Sensor to Provide Overall HVAC Status
-It's useful to have a single entity we can look at to tell us the overastate of the HVAC system.  This should parallel what we see when we look at the thermostat. Define the new sensor as a templage text sensor:
+It's useful to have a single entity we can look at to tell us the overastate of the HVAC system.  This should parallel what we see when we look at the thermostat. Define the new sensor as a template text sensor:
 ```
 # Device status:
 #   Cooling: Compressor On, Cool Mode On
