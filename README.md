@@ -26,7 +26,7 @@ I ended up building this in several parts:
   - [Full Information in Homeassistant](https://github.com/czsmith/HVAC-Monitor/edit/main/README.md#full-information-in-homeassistant)
   - [Accessing HVAC State](https://github.com/czsmith/HVAC-Monitor/edit/main/README.md#accessing-hvac-state)
   - [HVAC Monitor Board](https://github.com/czsmith/HVAC-Monitor/edit/main/README.md#accessing-hvac-state)
-    - [Design Tools]
+    - [Design Tools](https://github.com/czsmith/HVAC-Monitor/tree/main#design-tools)
   - [The Build](https://github.com/czsmith/HVAC-Monitor/edit/main/README.md#the-build)
     - [Identifying Signal Wires](https://github.com/czsmith/HVAC-Monitor/edit/main/README.md#identifying-signal-wires)
     - [Wiring](https://github.com/czsmith/HVAC-Monitor#wiring)
