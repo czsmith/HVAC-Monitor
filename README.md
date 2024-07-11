@@ -29,23 +29,24 @@ I ended up building this in several parts:
     - [Design Tools]
   - [The Build](https://github.com/czsmith/HVAC-Monitor/edit/main/README.md#the-build)
     - [Identifying Signal Wires](https://github.com/czsmith/HVAC-Monitor/edit/main/README.md#identifying-signal-wires)
-    - [Wiring]
-    - [Double Check]
-  -   [Bench Setup] 
-    - [Adjust Voltage]
-    - [Assemble the Temperature Probes]
-  - [ESPHome Software for the Monitor Board]
-    - [Basic Setup]
-    - [Define the Probe Sensors]
-    - [Finding the Temperature Probe Address]
-    - [Derive a Sensor for the Difference Between Intake and Discharge Temperatures]
-    - [Define Sensors for the State of the HVAC]
-    - [Diagnostic Sensor]
-  - [Testing the HVAC Monitor Board]
-    - [Check Temperature Probes]
-    - [Check State Sensor Inputs
-  - [Connect the HVAC Monitor Board to Your HVAC System]
-    - [Install the Temperature Probes]
+    - [Wiring](https://github.com/czsmith/HVAC-Monitor#wiring)
+    - [Double Check](https://github.com/czsmith/HVAC-Monitor#double-check)
+  -   [Bench Setup](https://github.com/czsmith/HVAC-Monitor#adjust-voltage)
+    - [Adjust Voltage](https://github.com/czsmith/HVAC-Monitor#adjust-voltage)
+    - [Assemble the Temperature Probes](https://github.com/czsmith/HVAC-Monitor#adjust-voltage)
+  - [ESPHome Software for the Monitor Board](https://github.com/czsmith/HVAC-Monitor#esphome-software-for-the-monitor-board)
+    - [Basic Setup](https://github.com/czsmith/HVAC-Monitor#basic-setup)
+    - [Define the Probe Sensors](https://github.com/czsmith/HVAC-Monitor#define-the-probe-sensors)
+    - [Finding the Temperature Probe Address](https://github.com/czsmith/HVAC-Monitor#finding-the-temperature-probe-address)
+    - [Derive a Sensor for the Difference Between Intake and Discharge Temperatures](https://github.com/czsmith/HVAC-Monitor#derive-a-sensor-for-the-difference-between-intake-and-discharge-temperatures)
+    - [Define Sensors for the State of the HVAC](https://github.com/czsmith/HVAC-Monitor#define-sensors-for-the-state-of-the-hvac)
+    - [Diagnostic Sensor](https://github.com/czsmith/HVAC-Monitor#diagnostic-sensor)
+  - [Programming the HVAC Monitor Board](https://github.com/czsmith/HVAC-Monitor#programming-the-hvac-monitor-board)
+  - [Testing the HVAC Monitor Board](https://github.com/czsmith/HVAC-Monitor#testing-the-hvac-monitor-board)
+    - [Check Temperature Probes](https://github.com/czsmith/HVAC-Monitor#check-temperature-probes)
+    - [Check State Sensor Inputs](https://github.com/czsmith/HVAC-Monitor#check-state-sensor-inputs)
+  - [Connect the HVAC Monitor Board to Your HVAC System](https://github.com/czsmith/HVAC-Monitor#connect-the-hvac-monitor-board-to-your-hvac-system)
+    - [Install the Temperature Probes](https://github.com/czsmith/HVAC-Monitor#install-the-temperature-probes)
 
 
 
