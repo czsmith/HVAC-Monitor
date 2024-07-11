@@ -1,0 +1,245 @@
+    
+esphome:
+  name: $name
+  friendly_name: $friendlyName
+# output sympols to output.map for debugging. you can remove if not needed
+  platformio_options:
+    build_flags: 
+        - "-Wl,-Map,output.map"  
+
+#esp32: 
+#  board: nodemcu-32s
+#  framework: 
+#    type: arduino
+#    version: recommended
+
+esp8266:    
+  board: nodemcuv2
+  framework:
+    version: recommended
+  
+wifi:
+  ssid: !secret wifi_ssid
+  password: !secret wifi_key
+
+  ap:
+    ssid: "$name"
+    password: !secret HVAC_ap_wifi_key
+
+#captive_portal:
+
+logger:
+  baud_rate: 115200
+  level: debug
+
+api:
+   encryption:
+      key: !secret HVAC_apikey
+ 
+#to use mqtt disable the api: section above. This enables you to use esphome with 
+#non homeassistant systems
+#modify the mqtt section to your needs
+#See: https://esphome.io/components/mqtt.html
+
+#mqtt:
+  #broker: 192.168.2.175
+  #port: 1883
+  #username: !secret mqtt_user
+  #password: !secret mqtt_pasword
+  #discovery_prefix: "homeassistant" 
+  #topic_prefix: $name
+       
+ota:
+  platform: esphome 
+  password:  $HVAC_ota_password
+#  safe_mode: True
+
+time:
+ - platform: sntp
+
+web_server:
+  port: 80
+  ota: false
+  version: 3
+    
+#dallas:
+#  pin: D2
+#  id: dal
+#  auto_discovery: true
+one_wire:
+  - platform: gpio
+    pin: D2
+    id: dal
+  
+#  Force temp sensor data to be displayed
+#  Replace the normal -lambda filter with:
+#       - lambda: |-
+#           id(dal).dump_config();
+#           return x * (9.0/5.0) + 32.0;
+
+          
+# Individual sensors
+sensor:
+  - platform: dallas_temp
+    address: $discharge_sensor_address # No Tape
+    id: discharge_temp
+    name: "Discharge Temperature"
+    # No band
+    unit_of_measurement: "°F"
+    update_interval: 30s
+    filters:
+      - offset: 0.0
+      - lambda: return x * (9.0/5.0) + 32.0;
+   
+  - platform: dallas_temp
+    address: $intake_sensor_address # Blue Tape
+    id: intake_temp
+    name: "Intake Temperature"
+    # Blue band
+    unit_of_measurement: "°F"
+    update_interval: 30s
+    filters:
+      - offset: 0.0
+      - lambda: |-
+          // id(dal).dump_config();
+          return x * (9.0/5.0) + 32.0;
+
+
+  - platform: dallas_temp
+    address: $ambient_sensor_address # 
+    id: ambient_temp
+    name: "Ambient Temperature"
+    # ??? band
+    filters:
+      - lambda: return x * (9.0/5.0) + 32.0;
+    unit_of_measurement: "°F"
+    update_interval: 30s
+
+  - platform: template
+    name: "Temperature Difference"
+    id: temp_difference
+    update_interval: 30s
+    unit_of_measurement: "°F"
+    lambda: |-
+      return (id(discharge_temp).state - id(intake_temp).state);
+      
+# Some Dianostic info
+  - platform: wifi_signal
+    name: "ESP Wifi Signal"
+    update_interval: 60s
+
+
+
+binary_sensor:
+  - platform: gpio
+    name: "Fan On"
+    id: hvac_fan_on
+    pin: 
+      number: D1
+      inverted: true
+      mode:
+        input: true
+        pullup: false
+    filters:
+      - delayed_on: 100ms
+      - delayed_off: 100ms          
+    device_class: running
+    
+  - platform: gpio
+    name: "Emergency/Aux Heat On"
+    id: hvac_auxemer_on
+    pin: 
+      number: D5
+      inverted: true
+      mode:
+        input: true
+        pullup: false
+    filters:
+      - delayed_on: 100ms
+      - delayed_off: 100ms          
+    device_class: running
+
+  - platform: gpio
+    name: "Cool Mode"
+    id: hvac_cool_on
+    pin: 
+      number: D6
+      inverted: true
+      mode:
+        input: true
+        pullup: false
+    filters:
+      - delayed_on: 100ms
+      - delayed_off: 100ms          
+#    device_class: None
+
+  - platform: gpio
+    name: "Compressor On"
+    id: hvac_compressor_on
+    pin: 
+      number: D7
+      inverted: true
+      mode:
+        input: true
+        pullup: false
+    filters:
+      - delayed_on: 100ms
+      - delayed_off: 100ms          
+    device_class: running
+    
+
+# Lets add some sensors about this devices
+text_sensor:
+
+# Device status:
+#   Cooling: Compressor On, Cool Mode On
+#   Heating: Compressor On, Cool Mode Off, Emergency/Aux Heat Off
+#   Heating w/Aux: Compressor On, Cool Mode Off, Emergency/Aux Heat On
+#   Fan Only: Compressor Off, Fan On
+#   Off:  Compressor Off, Fan Off
+#   Unknown: Anything not listed above  
+
+  - platform: template
+    name: "HVAC Status"
+    id: hvac_status
+    update_interval: 30s
+    lambda: |-
+      if (!id(hvac_compressor_on).state) {
+        // Compressor not running.  Either "OFF" ofr "FAN"
+        if (id(hvac_fan_on).state) {
+          return {"FAN"};
+        } else {
+          return {"OFF"};
+        }
+      } else {
+        // Compressor is running.. Figure cool or heating
+        if (id(hvac_cool_on).state) {
+          return {"Cool"};
+        } else {
+          if (id(hvac_auxemer_on).state) {
+            return {"Aux Heat"};
+          } else {
+            return {"Heat"};
+          }
+        }
+      }
+            
+ 
+ # Diagnostic info   
+  - platform: wifi_info
+    ip_address:
+      name: ESP IP Address
+    ssid:
+      name: ESP SSID
+    bssid:
+      name: ESP BSSID
+    mac_address:
+      name: ESP Mac Wifi Address
+#    scan_results:
+#      name: ESP Latest Scan Results
+    dns_address:
+      name: ESP DNS Address
+
+  - platform: version
+    name: "ESPHome Version"
+    
