@@ -41,6 +41,7 @@ I ended up building this in several parts:
     - [Derive a Sensor for the Difference Between Intake and Discharge Temperatures](https://github.com/czsmith/HVAC-Monitor#derive-a-sensor-for-the-difference-between-intake-and-discharge-temperatures)
     - [Define Sensors for the State of the HVAC](https://github.com/czsmith/HVAC-Monitor#define-sensors-for-the-state-of-the-hvac)
     - [Diagnostic Sensor](https://github.com/czsmith/HVAC-Monitor#diagnostic-sensor)
+    - [Derive a Sensor to Provide Overall HVAC Status](https://github.com/czsmith/HVAC-Monitor#derive-a-sensor-to-Provide-Overall-HVAC-Status)
   - [Programming the HVAC Monitor Board](https://github.com/czsmith/HVAC-Monitor#programming-the-hvac-monitor-board)
   - [Testing the HVAC Monitor Board](https://github.com/czsmith/HVAC-Monitor#testing-the-hvac-monitor-board)
     - [Check Temperature Probes](https://github.com/czsmith/HVAC-Monitor#check-temperature-probes)
@@ -444,6 +445,43 @@ text_sensor:
   - platform: version
     name: "ESPHome Version"
 ```
+### Derive a Sensor to Provide Overall HVAC Status
+It's useful to have a single entity we can look at to tell us the overastate of the HVAC system.  This should parallel what we see when we look at the thermostat. Define the new sensor as a templage text sensor:
+```
+# Device status:
+#   Cooling: Compressor On, Cool Mode On
+#   Heating: Compressor On, Cool Mode Off, Emergency/Aux Heat Off
+#   Aux Heat: Compressor On, Cool Mode Off, Emergency/Aux Heat On
+#   Fan: Compressor Off, Fan On
+#   Off:  Compressor Off, Fan Off
+
+  - platform: template
+    name: "HVAC Status"
+    id: hvac_status
+    update_interval: 30s
+    lambda: |-
+      if (!id(hvac_compressor_on).state) {
+        // Compressor not running.  Either "OFF" ofr "FAN"
+        if (id(hvac_fan_on).state) {
+          return {"Fan"};
+        } else {
+          return {"Off"};
+        }
+      } else {
+        // Compressor is running.. Figure cool or heating
+        if (id(hvac_cool_on).state) {
+          return {"Cool"};
+        } else {
+          if (id(hvac_auxemer_on).state) {
+            return {"Aux Heat"};
+          } else {
+            return {"Heat"};
+          }
+        }
+      }
+```
+Since the status is a text value, this is placed in the "text_sensor:" section of the config file.
+
 ## Programming the HVAC Monitor Board
 Once the configuration files are complete (including a secrets.yaml file), compile the per-device yaml file.  I have a Mac, so my command line command is:
 ```
