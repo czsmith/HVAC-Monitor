@@ -414,7 +414,7 @@ binary_sensor:
       - delayed_off: 100ms          
     device_class: running
 ```
-The Cool sensor is displays On/Off states because we accepted the default device_class.  The other three sensors display "Running" and "Not RUnning" because we set the display_class to "running."
+The Cool sensor is displays On/Off states because we accepted the default device_class.  The other three sensors display "Running" and "Not Running" because we set the display_class to "running."
 
 The filters provide some debounce in case of spurious signals.
 
@@ -445,7 +445,7 @@ text_sensor:
     name: "ESPHome Version"
 ```
 ### Derive a Sensor to Provide Overall HVAC Status
-It's useful to have a single entity we can look at to tell us the overastate of the HVAC system.  This should parallel what we see when we look at the thermostat. Define the new sensor as a template text sensor:
+It's useful to have a single entity we can look at to tell us the overall state of the HVAC system.  This should parallel what we see when we look at the thermostat. Define the new sensor as a template text sensor:
 ```
 # Device status:
 #   Cooling: Compressor On, Cool Mode On
@@ -508,10 +508,10 @@ To access the logs, run the following from the command line:
    esphome logs <your main configuration yaml filename>
 ```
 ### Check Temperature Probes
-One at a time, put the probe in one or two glasses of water with different temperatures.  Make sure you get the right temperature on the right probe.  These probles do not respond instantly, so allow a minute or two for the tmperature to stabilize.
+One at a time, put the probe in one or two glasses of water with different temperatures.  Make sure you get the right temperature on the right probe.  These probles do not respond instantly, so allow a minute or two for the temperature to stabilize.
 
 ### Check State Sensor Inputs
-Run this test with external power.  If you are using a DC power supply, make sure that:
+Run this test with external power.  Make sure that:
 - The Power header is using External power (pins 1 and 2 jumpered)
 - The Common input is shared (pins 1 and 2 are jumpered)
 - If you are using a DC power source, make sure PWR is connected to positive voltage and COM to negative.
@@ -527,12 +527,16 @@ Refer to Jim's [probe documentation](https://github.com/jshank/ACWatcher/blob/ma
 ## ESPHome Portion Done
 You should now have a usable HVAC monitor with a web interface.
 
-To get a deeping understanding of your system, you'll need to run Homeassistant and do soe additional configuraiton.
+To get a deeping understanding of your system, you'll need to run Homeassistant and do some additional configuraiton.
 
 
 
 
-=====================================================================================================================================
+# ======================================== 
+
+## Jim Shank's description below
+
+# =========================================
 
 
 HVAC continues to be one of the highest energy devices in our household yet even the more advanced systems don't contain monitoring or alerting components to let you know when something isn't working correctly. This can be both frustrating and costly. Modern cooling systems will run the fan and compressor continuously, even if they aren't working properly. This solution aims to provide a simple and cost effective way of monitoring the performance of your system and alerting you when there are problems. 
