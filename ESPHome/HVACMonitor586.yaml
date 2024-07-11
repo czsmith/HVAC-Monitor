@@ -1,0 +1,11 @@
+# Build an HVAC Monitor for 586
+
+substitutions:
+  name: "hvac586"                   #unique network name, system name
+  friendlyName: "HVAC Monitor 586"  #used as the friendly name of your application in HomeAssistant
+  discharge_sensor_address: "0x8831f0d446c64d28"
+  intake_sensor_address: "0x9831bcd446d98028"
+  ambient_sensor_address: "0x6e3845d446455e28"
+    
+    
+<<: !include HVACMonitorCommon.yaml
