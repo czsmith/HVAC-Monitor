@@ -52,7 +52,7 @@ I ended up building this in several parts:
     - [Install the Temperature Probes](https://github.com/czsmith/HVAC-Monitor#install-the-temperature-probes)
 - [Home Assistant: Get the Full View](https://github.com/czsmith/HVAC-Monitor#home-assistant-get-the-full-view)
   - [ESPHome Integration in Home Assistant](https://github.com/czsmith/HVAC-Monitor#esphome-integration-in-home-assistant)
-  - [View of Today's HVAC activity]](https://github.com/czsmith/HVAC-Monitor#view-of-todays-hvac-activity)
+  - [View of Today's HVAC activity](https://github.com/czsmith/HVAC-Monitor#view-of-todays-hvac-activity)
   - [View of Yesterday's HVAC activity](https://github.com/czsmith/HVAC-Monitor#view-of-yesterdays-hvac-activity)
 
 
