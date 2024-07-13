@@ -21,17 +21,18 @@ I ended up building this in several parts:
 - Homeassistant to provide visibility and additional, statstical, information
 
 ## Table of Contents
-- [HVACMonitor: Project to Monitor My HVAC System](https://github.com/czsmith/HVAC-Monitor/edit/main/README.md#hvacmonitor-project-to-monitor-my-hvac-system)
-  - [Current Information from the ESPHome on the HVAC Monitor board](https://github.com/czsmith/HVAC-Monitor/edit/main/README.md#current-information-from-the-esphome-on-the-hvac-monitor-board)
-  - [Full Information in Homeassistant](https://github.com/czsmith/HVAC-Monitor/edit/main/README.md#full-information-in-homeassistant)
-  - [Accessing HVAC State](https://github.com/czsmith/HVAC-Monitor/edit/main/README.md#accessing-hvac-state)
-  - [HVAC Monitor Board](https://github.com/czsmith/HVAC-Monitor/edit/main/README.md#accessing-hvac-state)
+- [HVACMonitor: Project to Monitor My HVAC System](https://github.com/czsmith/HVAC-Monitor#hvacmonitor-project-to-monitor-my-hvac-system)
+  - [Current Information from the ESPHome on the HVAC Monitor board](https://github.com/czsmith/HVAC-Monitor#current-information-from-the-esphome-on-the-hvac-monitor-board)
+  - [Full Information in Homeassistant](https://github.com/czsmith/HVAC-Monitor#full-information-in-homeassistant)
+  - [Accessing HVAC State](https://github.com/czsmith/HVAC-Monitor#accessing-hvac-state)
+- [Hardware; The HVAC Monitor Board](https://github.com/czsmith/HVAC-Monitor#hardware-the-hvac-monitor-board)
+  - [Architecture](https://github.com/czsmith/HVAC-Monitor#architecture)
     - [Design Tools](https://github.com/czsmith/HVAC-Monitor/tree/main#design-tools)
-  - [The Build](https://github.com/czsmith/HVAC-Monitor/edit/main/README.md#the-build)
-    - [Identifying Signal Wires](https://github.com/czsmith/HVAC-Monitor/edit/main/README.md#identifying-signal-wires)
+  - [The Build](https://github.com/czsmith/HVAC-Monitorthe-build)
+    - [Identifying Signal Wires](https://github.com/czsmith/HVAC-Monitor#identifying-signal-wires)
     - [Wiring](https://github.com/czsmith/HVAC-Monitor#wiring)
     - [Double Check](https://github.com/czsmith/HVAC-Monitor#double-check)
-  -   [Bench Setup](https://github.com/czsmith/HVAC-Monitor#adjust-voltage)
+    - [Bench Setup](https://github.com/czsmith/HVAC-Monitor#adjust-voltage)
     - [Adjust Voltage](https://github.com/czsmith/HVAC-Monitor#adjust-voltage)
     - [Assemble the Temperature Probes](https://github.com/czsmith/HVAC-Monitor#adjust-voltage)
   - [ESPHome Software for the Monitor Board](https://github.com/czsmith/HVAC-Monitor#esphome-software-for-the-monitor-board)
@@ -47,8 +48,12 @@ I ended up building this in several parts:
     - [Check Temperature Probes](https://github.com/czsmith/HVAC-Monitor#check-temperature-probes)
     - [Check State Sensor Inputs](https://github.com/czsmith/HVAC-Monitor#check-state-sensor-inputs)
   - [Connect the HVAC Monitor Board to Your HVAC System](https://github.com/czsmith/HVAC-Monitor#connect-the-hvac-monitor-board-to-your-hvac-system)
+    - [Mounting the HVAC Monitor](https://github.com/czsmith/HVAC-Monitor/edit/main/README.md#mounting-the-hvac-monitor)
     - [Install the Temperature Probes](https://github.com/czsmith/HVAC-Monitor#install-the-temperature-probes)
-
+- [Home Assistant: Get the Full View](https://github.com/czsmith/HVAC-Monitor#home-assistant-get-the-full-view)
+  - [ESPHome Integration in Home Assistant]([)](https://github.com/czsmith/HVAC-Monitor#esphome-integration-in-home-assistant)
+  - [View of Today's HVAC activity]()
+  - [View of Yesterday's HVAC activity]()
 
 
 ## Current Information from the ESPHome on the HVAC Monitor board
@@ -85,7 +90,10 @@ The signals to control the compressor (whether one or two stages), fan, auxillar
 
 **THIS DESIGN IS FOR HVAC SYSTEMS WITH ONE OR TWO STAGE COMPRESSORS AND ONE OR TWO STAGE HEATING**
 
-## HVAC Monitor Board
+# Hardware; The HVAC Monitor Board
+The heart of this project is the HVAC Monitor board.  This is the device which collects most of the information about the current state of the HVAC system. On its own, it can give a "current" view of the operation of your system.
+
+## Architecture
 The HVAC monitor is built using a WEMOS D1 Mini ESP develpment board, running ESPHome.  
 
 <img src="Images/Schematic_HVACMon2_2024-07-10.png">
@@ -518,6 +526,9 @@ Run this test with external power.  Make sure that:
 
 Connect a jumper from the PWR to each input screw.  There should be an ON message in the log and the web interface should show On or Running for that input when you connect and an OFF message when you disconnect.
 
+## Mounting the HVAC Monitor
+The HVAC Monitor is best mounted near your air handler where there is ready access to the wiring from the thermostat and access to the intake and discharge ducts.  It's also best to mount this in a way that will not interfere with servicing your air handler. In my case, I put the board in an old Hunter irrigation box with a strong magnet on the back and just laced it on my air handler where it's accessible but is easily moved.
+
 ## Connect the HVAC Monitor Board to Your HVAC System
 I strongly recommend that you turn off the HVAC system at the breaker box.  If you accidentally short any of the thermostat wires, you may blow the fuse (at best) which will require opening the air handler and replacing it. **NEVER OPEN THE AIR HANDLER WITH THE POWER ON**
 
@@ -529,267 +540,119 @@ You should now have a usable HVAC monitor with a web interface.
 
 To get a deeping understanding of your system, you'll need to run Homeassistant and do some additional configuraiton.
 
+# Home Assistant: Get the Full View
+By itself, the HVAC Monitor is a useful, stand-alone, system to give you a *current* view of the operational state of your HVAC system.
 
+For a broader perspective over time, we turn to Home Assistant to gather information and present it in much more flexible ways.
 
+If you are not familiar wirh Homeassistant (I'll call it HA to save space), [Wikipedia](https://en.wikipedia.org/wiki/Home_Assistant) describes it as:
 
-# ======================================== 
+*Home Assistant is free and open-source software used for home automation. It serves as an integration platform and smart home hub, allowing users to control smart home devices. The software emphasizes local control and privacy and is designed to be independent of any specific Internet of Things (IoT) ecosystem. Its interface can be accessed through a web-based user interface, by using companion apps for Android and iOS, or by voice commands via a supported virtual assistant, such as Google Assistant, Amazon Alexa, Apple Siri, and Home Assistant's own "Assist" (a built-in local voice assistant) using natural language.*
 
-## Jim Shank's description below
+Installing and setting up HA is beyond the scope of this project description.  For more information, please refer to the [Home Assistant web site](https://www.home-assistant.io/).  Though not the latest, a decent introduction is available on Liam Alexander Colman's [Home Assistant Guide website](https://home-assistant-guide.com/). His [What is Home Assistant page](https://home-assistant-guide.com/guide/what-is-home-assistant-and-what-can-it-do/) is a good introduction and the [beginner's guide](https://home-assistant-guide.com/home-assistant-beginners-guide/) can help you get started.
 
-# =========================================
+## ESPHome Integration in Home Assistant
+Once your HA is installed and running, accessing the HVAC Monitor requires installing and configuring the ESPHome integration in HA.  From the Settings / Devices and Services menu, on the Integrations tab select the *Add Integration* button to find and install ESPHome.  The integration is described [here](https://www.home-assistant.io/integrations/esphome/).
 
+The ESPHome integration should find the HVAC Monitor automatically.  To add it, you will have to provide the encryption key that was specified in the "api" section of the ESPHome configuration yaml file (well, more likely the secrets.yaml file.)  Once added, all the information visible on the HVAC Monitor web page becomes sensor input to HA.
 
-HVAC continues to be one of the highest energy devices in our household yet even the more advanced systems don't contain monitoring or alerting components to let you know when something isn't working correctly. This can be both frustrating and costly. Modern cooling systems will run the fan and compressor continuously, even if they aren't working properly. This solution aims to provide a simple and cost effective way of monitoring the performance of your system and alerting you when there are problems. 
+### View of Today's HVAC activity
+While the HVAC Monitor provides *current* information, HA can aggregate this to give us a more complete view for the whole day.
 
-There are 3 components:
-- ACWatcher
-	- An ESP based device installed near your HVAC system to monitor the state of the system (system active, intake temperature and discharge temperature)
-- ESPHome
-	- The firmware running on ACWatcher to send sensor output to Home Assistant
-- Home Assistant
-	- Central home automation system capable of integrating with hundreds of IoT solutions
-	- Tracks historical performance
-	- Alerts to abnormal operating conditions
+For this, we'll use the ["history_stats" integration](https://www.home-assistant.io/integrations/history_stats/).
 
-## Table of Contents
-- [Solution to monitor the performance of an HVAC system](#solution-to-monitor-the-performance-of-an-hvac-system)
-  - [Table of Contents](#table-of-contents)
-  - [Disclaimers and Legal Stuff First](#disclaimers-and-legal-stuff-first)
-  - [AC Watcher](#ac-watcher)
-    - [BOM](#bom)
-    - [Enclosures & Mounts](#enclosures--mounts)
-    - [Assembly](#assembly)
-  - [ESPHome](#esphome)
-    - [Full configuration](#full-configuration)
-    - [Finding the temperature sensor addresses](#finding-the-temperature-sensor-addresses)
-    - [Calibrating the CT Clamp](#calibrating-the-ct-clamp)
-  - [Temperature Probes](#temperature-probes)
-    - [Temperature Probe Installation](#temperature-probe-installation)
-    - [Final Mounting](#final-mounting)
-  - [Home Assistant](#home-assistant)
-  - [Possible Improvements](#possible-improvements)
-
-## Disclaimers and Legal Stuff First
-As an Amazon Associate I earn from qualifying purchases. I get commissions for purchases made through links in this post. Working with electricity is dangerous and can cause personal injury or DEATH as well as other property loss or damage if not used or constructed properly. If you have any doubts whatsoever about performing do-it-yourself electrical work, PLEASE do the smart thing and hire a QUALIFIED SPECIALIST to perform the work for you.
-
-NEVER WORK WITH LIVE VOLTAGE. Always disconnect the power source before working with electrical circuits.
-
-## AC Watcher
-For my installation, I used an ESP8266 based Wemos D1 Mini Pro. I [modified](https://youtu.be/hXRcJXMjlyg?t=111) the antenna jumper to utilize the external antenna since the unit was installed in the garage. The Wemos D1 Mini is compact while providing a single ADC to capture current (is the system running) and multiple GPIOs to communicate with the temperature probes.
-### BOM
-| Qty | Device                                                     | URL                     |
-| --- | ---------------------------------------------------------- | ----------------------- |
-| 1   | Wemos D1 Mini Pro                                          | https://amzn.to/3xFy5fR |
-| 2   | Dallas 1-wire temperature probes                           | https://amzn.to/3xP2s3L |
-| 1   | Stainless Steel Straws                                     | https://amzn.to/3HeELol |
-| 1   | YHDC Split Core Current Transformer Non-invasive SCT013-03 | https://amzn.to/3aVo3OQ |
-| 1   | 40x60mm Perf Board                                         | https://amzn.to/39kikS4 |
-| 2   | 10kOhm  1/4 Watt THT Resistors                             | https://amzn.to/3NIqNxz |
-| 1   | 4.7kOhm  1/4 Watt THT Resistors                            | https://amzn.to/3zBT1G6 |
-| 1   | 10uF 25v Electrolytic Capacitor                            | https://amzn.to/3xj8AQ9 |
-| 2   | 3-pin PCB mount 5mm terminal block connectors              | https://amzn.to/3O9zOzy |
-| 1   | 3.5mm female jack breakout board                           | https://amzn.to/3tssQgU | 
-
-**Tools**: Soldering iron, solder, shrink tubing and wires
-
-### Enclosures & Mounts
-<img src="images/acwatcher_case.jpeg" width=300 align=right>
-It helps significantly to have a 3d printer but you can always used shapeways.com or ask a friend to print these for you.
-
-- [ACWatcher Case](3dfiles/Case.3mf)
-- [ACWatcher Case Lid](3dfiles/Lid.3mf)
-- 2 x [Temp Probe Mount](3dfiles/Temp%20Probe%20Holder.3mf)
-
-### Assembly
-Follow the diagram below to solder the main part into the perf board, making sure you adhere to the schematic.
-
-**Schematic Wiring Diagram (From below)**
-
-<img src="images/acwatcher_perf_wiring_diagram.png" width=600>
-
-**Top of perf board**
-
-<img src="images/acwatcher_perf_top.jpeg" width=600>
-
-
-**ACWatcher Schematic**
-
-<img src="images/acwatcher_schematic.png" width=600>
-
-Make sure to check all of your connections with a multimeter before you put it in the case. I also recommend getting ESPHome installed and working before putting it in the enclosure.
-
-## ESPHome
-
-Installing and configuring ESPHome is beyond the scope of this article, check out the great documentation over at https://esphome.io/
-
-### Full configuration
-Use the following configuration for your device replacing the wifi_ssid and password as well as your own IP ranges.
-
+In the HA configuration yaml file, create new "sensors" by adding:
 ```
-esphome:
-  name: acwatcher
-
-esp8266:
-  board: d1_mini_pro
-
-# Enable logging
-logger:
-
-# Enable Home Assistant API
-api:
-  encryption:
-    key: "generated_by_the_system"
-
-ota:
-  password: "generated_by_the_system"
-
-wifi:
-  ssid: !secret wifi_ssid
-  password: !secret wifi_password
-  manual_ip:
-    static_ip: 10.1.12.239
-    gateway: 10.1.12.1
-    subnet: 255.255.255.0
-
-  # Enable fallback hotspot (captive portal) in case wifi connection fails
-  ap:
-    ssid: "Acwatcher Fallback Hotspot"
-    password: "generated_by_the_system"
-
-captive_portal:
-
-globals:
-   - id: hvac_on_threshold
-     type: float
-     restore_value: no
-     initial_value: '2.00' # Update this to ~1/2 the amperage of the ON value of your HVAC
-
-dallas:
-  - pin: D4
-  
-# Individual sensors
 sensor:
-  - platform: dallas
-    address: 0x51000005d3a58b28 # Replace with your address
-    id: discharge_temp
-    name: "Discharge Temperature"
-    filters:
-      - lambda: return x * (9.0/5.0) + 32.0;
-    unit_of_measurement: "°F"
-    
-  - platform: dallas
-    address: 0x0e000005d3516128 # Replace with your address
-    id: intake_temp
-    name: "Intake Temperature"
-    # Green band
-    filters:
-      - lambda: return x * (9.0/5.0) + 32.0;
-    unit_of_measurement: "°F"
-    
-  - platform: ct_clamp
-    sensor: adc_sensor
-    id: hvac_current
-    name: "HVAC Current"
-    update_interval: 1s
-    filters:
-      - calibrate_linear:
-        - 0 -> 0
-        - 0.052 -> 4.3 # Replace with your CT clamp calibration 
-    
-  - platform: adc
-    pin: A0
-    id: adc_sensor
-    
-  - platform: template
-    name: "Delta T"
-    id: temp_delta_t
-    update_interval: 60s
-    unit_of_measurement: "°F"
-    lambda: |-
-      return (id(intake_temp).state - id(discharge_temp).state);
+  - platform: history_stats
+    name: "Compressor Run Cycles"
+    unique_id: compressor_run_cycles
+    entity_id:  binary_sensor.hvac586_compressor_on
+    state: 'on'
+    type: count
+    start: "{{ today_at() }}"
+    end: "{{ now() }}"
 
-    
-binary_sensor:
-  - platform: template
-    name: "HVAC State"
-    lambda: |-
-      if (id(hvac_current).state > id(hvac_on_threshold)) {
-        return true;
-      } else {
-        return false;
-      }
+  - platform: history_stats
+    name: "Compressor Run Time"
+    unique_id: compressor_run_time
+    entity_id:  binary_sensor.hvac586_compressor_on
+    state: 'on'
+    type: time
+    start: "{{ today_at() }}"
+    end: "{{ now() }}"
+
+  - platform: history_stats
+    name: "Compressor Run Time Percent"
+    unique_id: compressor_run_time_percent
+    entity_id:  binary_sensor.hvac586_compressor_on
+    state: 'on'
+    type: ratio
+    start: "{{ today_at() }}"
+    end: "{{ now() }}"
+
+  - platform: history_stats
+    name: "Compressor Off Time"
+    unique_id: compressor_off_time
+    entity_id:  binary_sensor.hvac586_compressor_on
+    state: 'off'
+    type: time
+    start: "{{ today_at() }}"
+    end: "{{ now() }}"
+
+  - platform: history_stats
+    name: "Compressor Off Time Percent"
+    unique_id: compressor_off_time_percent
+    entity_id:  binary_sensor.hvac586_compressor_on
+    state: 'off'
+    type: ratio
+    start: "{{ today_at() }}"
+    end: "{{ now() }}"
 ```
+Adding this gives us information about what the HVAC system has been doing so far today: how many times it's cycled on and off and how long it's been running and off overall:
 
-### Finding the temperature sensor addresses
-Connect the temperature probes to the screw terminals and then power up the ACWatcher with a USB connection that allows you to view the debug logs. Shortly after startup, you should see 2 different device addresses. You will replace my device addresses with your own:
+<img src="Images/HATodayStats.png" width=600>
 
+## View of Yesterday's HVAC Activity
+Similarly, we can create "sensors" which will report the previous day's totals:
 ```
-[20:05:51][C][dallas.sensor:075]: DallasComponent:
-[20:05:51][C][dallas.sensor:076]:   Pin: GPIO2
-[20:05:51][C][dallas.sensor:077]:   Update Interval: 60.0s
-[20:05:51][D][dallas.sensor:082]:   Found sensors:
-[20:05:51][D][dallas.sensor:084]:     0x0e000005d3516128 <--Here is the address of the temp sensor!
-[20:05:51][D][dallas.sensor:084]:     0x51000005d3a58b28 <--Here is the address of the other temp sensor!
+  - platform: history_stats
+    name: "Compressor Run Cycles Yesterday"
+    unique_id: compressor_run_cycles_yesterday
+    entity_id:  binary_sensor.hvac586_compressor_on
+    state: 'on'
+    type: count
+    end: "{{ today_at() }}"
+    duration:
+      hours: 24
+
+  - platform: history_stats
+    name: "Compressor Run Time Yesterday"
+    unique_id: compressor_run_time_yesterday
+    entity_id:  binary_sensor.hvac586_compressor_on
+    state: 'on'
+    type: time
+    end: "{{ today_at() }}"
+    duration:
+      hours: 24
+
+  - platform: history_stats
+    name: "Compressor Run Time Yesterday Percent"
+    unique_id: compressor_run_time_percent_yesterday
+    entity_id:  binary_sensor.hvac586_compressor_on
+    state: 'on'
+    type: ratio
+    end: "{{ today_at() }}"
+    duration:
+      hours: 24
 ```
+This adds the following "sensors" to our HA view:
 
-Replace the addresses and then restart again. Make sure you know which one is which. I used a piece of green shrink wrap on one and black on the other to differentiate. You can always just swap the addresses in the configuration if you get it wrong. 
+<img src="Images/HAYesterdayStats.png" width=600>
 
-At this point, you can insert the intake probe through the space where your air filter goes. You can use some electrical tape to temporarily attach the discharge probe to the vent, about 2-ft above the cooling coils. Power up your ACWatcher and watch the output in the logs to confirm you are seeing a decent difference in temperature while running the system. 
-### Calibrating the CT Clamp 
-Follow the excellent tutorial at https://esphome.io/components/sensor/ct_clamp.html#calibration for calibrating your CT Clamp. I recommend starting with a known good load (like a incandescent lightbulb) to calibrate your clamp. Precision isn't very important since we're only interested in finding out if the device is on or off.
+## Other Views
+Of course, any number of other views can be created in Home Assistant.  By adding a condition baed on Cooling or Heating, separate cooling and heating views are possible.
 
-<img src="images/hvac%20wiring.jpeg" width=600 align=right>
-Now that the clamp is calibrated. Open up your HVAC service cover and look inside for the electrical wiring. Look for the black wire, which should be thicker and clip the CT Clamp around it. Once again, check the logger output from ESPHome to make sure you are seeing an increase in current when the blower turns-on. Once you are fully calibrated, update the `hvac_on_threshold` variable to ~1/2 of the "on" value of your HVAC system. 
+Another interesting option would be to add an automation that fires when (1) the system has been heating or cooling for XX minutes but (2) there is not enough of a temperature difference.  This might suggest that the system is not working well and the automation could trigger an alarm or notification.
 
-## Temperature Probes
-I took a cue from the Honeywell HZ322 controller and designed a temperature probe similar to their solution. 3d print two of the [temperature probe holders](3dfiles/Temp%20Probe%20Holder.3mf). Make sure the holes are clear using a drill bit because you will want the **Stainless Steel Straw** to fit tightly. Depending on the depth of your vent, you may want to cut down the straw using a [tubing cutter](https://amzn.to/3Hf0BYM). If you do cut to tube, make sure to clean up the ends so you don't cut the cable while feeding it through. Next, press the straw into the temperature probe holder. Once I had it started, I placed the straw end flat on my work bench and pressed down hard until it was seated. Now feed the temperature probe through the straw and out the smaller hole in the back of the temperature probe holder. The finished product should look something like this.  
-<img src="images/temp_probe.jpeg" width=600>
 
-If everything looks correct, draw the temperature probe cabling into the body of the straw and then put another piece of shrink tubing on to stabilize the probe. Here is a view of the fully assembled probe, from inside the air return space.
-
-<img src="images/intake_probe_inside.jpeg" width=600>
-
-Wire everything up again and make sure the probes are working correctly before the next step.
-
-### Temperature Probe Installation
-<img src="images/intake_probe_outside.jpeg" width=300 align=right>Starting with the intake probe, locate a portion of the duct work or blower/furnace mounting pedestal. Making sure you don't damage anything inside the space, drill a 1/4" hole into the area and slide the probe in. You can see my location in the image above coming through the sheetrock below my HVAC blower, just in front of the main air return for the house. Insert the probe and affix with two appropriately sized screws.
-
-For the discharge probe, you will want to place the probe a few feet away from the blower to avoid damaging the probe when the heat is in use. Check out the [Honeywell DATS manual](https://manuals.plus/honeywell/c7735a1000-duct-air-temperature-sensor-manual) for guidance. You're likely going to be drilling into the duct work so carefully examine where you are drilling and make sure you won't damage anything inside the space. Carefully drill a 1/4" hole, just enough to penetrate the duct without the bit going too far in. Use a flashlight and make sure the space is clear before inserting the probe. If the hole looks good, place the probe into the hole and mark or drill two smaller holes for the temperature probe mount screw holes on either side of the main probe. Use sheet metal screws to affix the temperature probe mount to the duct work. One last time, connect it all up and check that everything is still working properly. 
-
-<img src="images/discharge_probe.jpeg" width=400>
-
-### Final Mounting
-<img src="images/acwatcher_mounted.jpeg" width=400 align=right>
-At this point, find a good place to mount the ACWatcher, preferably not directly on the HVAC unit to avoid temperature problems. You can easily extend the temperature probe cabling up to ~50-ft without issue if needed. I used double-sided mounting tape but included an updated enclosure that has mounting tabs. 
-
-## Home Assistant
-Home Assistant has native access to ESPHome devices through the integrations panel. Take a look at https://esphome.io/guides/getting_started_hassio.html for details. Once the integration is configure properly, in Home Assistant, go to **Settings** -> **Add Integration** - **ESPHome** and enter the IP address of the ACWatcher. If you kept the same device names as I did in the device configuration, the following automation will work for you.
-
-```
-- id: cooling_problems
-  alias: "Notify Cooling Problems"
-  trigger:
-    - platform: numeric_state
-      entity_id: sensor.delta_t
-      below: 15
-      for: "00:10:00"
-  condition:
-    condition: and
-    conditions:
-    - condition: state
-      entity_id: binary_sensor.hvac_state
-      state: 'on'
-      for: "00:05:00"
-    - condition: numeric_state
-      entity_id: sensor.discharge_temperature
-      below: 80
-  action:
-    - service: notify.mobile_app_pixel_5
-      data:
-        message: 'HVAC appears to be ineffective. Please check it out.'
-```
-
-I'm sure I'll develop additional solutions and enhance this script once we're in the heating season, but it covers me for now. 
-
-## Possible Improvements
-It would be nice to know what mode the HVAC system was in (heating or cooling) so that I can track heating performance as well. Right now I just ignore the output if the discharge temperature is greater than 80°F. Thermostats control the system by closing the circuit on a 24V AC loop between the Y/yellow (cooling) wire and the C/black wire (common). Something like a ZMPT101B voltage sensor would allow you to step-down the 24VAC to 3.3v so you could measure with another ADC. A better solution would be to use a [24vac controlled relay](https://amzn.to/3txCOO7) for a simple on/off that I could connect to another GPIO.
