@@ -25,7 +25,7 @@ I ended up building this in several parts:
   - [Current Information from the ESPHome on the HVAC Monitor board](https://github.com/czsmith/HVAC-Monitor#current-information-from-the-esphome-on-the-hvac-monitor-board)
   - [Full Information in Homeassistant](https://github.com/czsmith/HVAC-Monitor#full-information-in-homeassistant)
   - [Accessing HVAC State](https://github.com/czsmith/HVAC-Monitor#accessing-hvac-state)
-- [Hardware; The HVAC Monitor Board](https://github.com/czsmith/HVAC-Monitor#hardware-the-hvac-monitor-board)
+- [Hardware: The HVAC Monitor Board](https://github.com/czsmith/HVAC-Monitor#hardware-the-hvac-monitor-board)
   - [Architecture](https://github.com/czsmith/HVAC-Monitor#architecture)
     - [Design Tools](https://github.com/czsmith/HVAC-Monitor/tree/main#design-tools)
   - [The Build](https://github.com/czsmith/HVAC-Monitorthe-build)
@@ -90,7 +90,7 @@ The signals to control the compressor (whether one or two stages), fan, auxillar
 
 **THIS DESIGN IS FOR HVAC SYSTEMS WITH ONE OR TWO STAGE COMPRESSORS AND ONE OR TWO STAGE HEATING**
 
-# Hardware; The HVAC Monitor Board
+# Hardware: The HVAC Monitor Board
 The heart of this project is the HVAC Monitor board.  This is the device which collects most of the information about the current state of the HVAC system. On its own, it can give a "current" view of the operation of your system.
 
 ## Architecture
