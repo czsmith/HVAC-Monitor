@@ -18,7 +18,7 @@ Some of my functional goals:
 I ended up building this in several parts:
 - An ESPHome-based monitor for everything other than power consumption
 - A commercially available power monitor I could install in my breaker panel to capture the compressor and air handler power consumption.  More on this later.
-- Homeassistant to provide visibility and additional, statstical, information
+- Homeassistant to provide visibility and additional, stastical, information
 
 ## Table of Contents
 - [HVACMonitor: Project to Monitor My HVAC System](https://github.com/czsmith/HVAC-Monitor#hvacmonitor-project-to-monitor-my-hvac-system)
